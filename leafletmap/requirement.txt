@@ -1,0 +1,10 @@
+asgiref @ file:///tmp/build/80754af9/asgiref_1605055780383/work
+certifi==2020.12.5
+Django @ file:///tmp/build/80754af9/django_1612212120213/work
+django-leaflet @ file:///home/conda/feedstock_root/build_artifacts/django-leaflet_1596309434036/work
+GDAL==3.2.1
+numpy @ file:///D:/bld/numpy_1612117137524/work
+psycopg2 @ file:///C:/ci/psycopg2_1608147654043/work
+pytz @ file:///tmp/build/80754af9/pytz_1612215392582/work
+sqlparse @ file:///tmp/build/80754af9/sqlparse_1602184451250/work
+wincertstore==0.2
