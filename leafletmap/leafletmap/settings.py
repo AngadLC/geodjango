@@ -126,3 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# static files urls
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static')
+]
+# making the static files in the same folder called assests
+STATIC_ROOT = os.path.join(BASE_DIR,'assests')
+#django make this file by itself but after this code
+#python manage.py collectstatics command
