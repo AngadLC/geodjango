@@ -6,21 +6,147 @@
 {%block main %}
 <h1>Geodjango app</h1>
 <div id="map"></div>
+<div class="modal fade" id="pointadding" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Entery</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="User name">Name of the place</label>
+                    <input type="text" class="form-control" id="username">
+                    <small id="emailHelp" class="form-text text-muted">Thanks for helping our community</small>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="savedata()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {%endblock%}
 {%block js %}
 <script src="{% static 'main.js' %}"></script>
 {%endblock%}
 {% block data %}
 <script>
-$.getJSON("{% url 'nepaldata' %}", function (data) {
-    console.log(data);
-    L.geoJSON(data, {
-      onEachFeature: function (feature, layer) {
-        layer.bindPopup(
-          `<h5>district name: ${feature.properties.dist_name}</h5>`
-        );
-      },
-    }).addTo(map);
-    });
+
+    $('.modal').hide();
+    
+    map.on("click", function (event) {
+        console.log(event.latlng)
+        globalThis.lat = event.latlng['lat']
+        console.log(lat)
+        globalThis.lng = event.latlng['lng']
+        //   $('#pointadding').modal('show');
+        $('#pointadding').modal('toggle')
+    })
+
+    // function onclick
+    function savedata() {
+        console.log("hi")
+        var name = $('#username').val()
+
+        console.log(globalThis.lat)
+        console.log(globalThis.lng)
+        L.marker([globalThis.lat, globalThis.lng]).bindPopup(name).addTo(map)
+
+        if (name != '' && lng != '') {
+
+            context = {
+                'name1': name,
+                'lat2': lat,
+                'lng3':lng
+            }
+
+            $.ajax({
+                url: '/pointdatafun',
+                type: 'GET',
+                data: context,
+                success: function (dataResult) {
+                    alert("added sucessful");
+                    $('#pointadding').modal('hide');
+
+                }
+            })
+
+        } else {
+            alert("Enter the all Information")
+
+        }
+    }
+
+
+
+var osm = L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    attribution:
+      "&copy; <a href='https://openstreetmap.org/copyright'> Openstreet map</a> contributors",
+  }
+);
+
+var darkLayer = L.tileLayer(
+  "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+  {
+    maxZoom: 20,
+    attribution:
+      '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+  }
+);
+
+var watercolor = L.tileLayer(
+  "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}",
+  {
+    attribution:
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: "abcd",
+    minZoom: 1,
+    maxZoom: 16,
+    ext: "jpg",
+  }
+);
+// adding nepal and point data from database
+var nepal = $.getJSON("{% url 'nepaldata' %}", function (data) {
+  console.log(data);
+  L.geoJSON(data, {
+    onEachFeature: function (feature, layer) {
+      layer.bindPopup(
+        `<h5>district name: ${feature.properties.dist_name}</h5>`
+      );
+    },
+  }).addTo(map);
+});
+var feature = $.getJSON("{% url 'locationdata' %}", function (data) {
+  console.log(data)
+  L.geoJSON(data, {
+    onEachFeature: function (feature, layer) {
+      layer.bindPopup(
+        `Name:${feature.properties.name}`
+      )
+    }
+  }).addTo(map)
+})
+// var data = L.layerGroup([nepal, feature]);
+var baseLayers = {
+  osm: osm,
+  "dark map": darkLayer,
+  "water color map": watercolor,
+  'Nepal':nepal
+};
+var overlayMaps = {
+  
+}
+osm.addTo(map);
+// feature.addTo(map)
+L.control.layers(baseLayers).addTo(map);
+
 </script>
 {%endblock%}

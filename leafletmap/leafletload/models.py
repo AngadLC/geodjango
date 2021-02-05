@@ -16,3 +16,7 @@ class Nepal(models.Model):
         db_table = 'nepal'
     def __str__(self):
         return self.dist_name
+
+class pointdata(models.Model):
+    name = models.CharField(max_length=50)
+    geom = model_gis.PointField()
